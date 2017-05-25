@@ -11,7 +11,7 @@ Free Code Camp's Twitch TV Project
       - Box/button with live/offline status
       - Button to see more information
       - Info box for more info
-    - Array of channels: ["ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "noobs2ninjas"]
+    - Array of channels: ["esl_sc2", "ogamingsc2", "cretetion", "freecodecamp", "storbeck", "habathcx", "robotcaleb", "noobs2ninjas", "misterrogers"]
     - Example API call URL: https://wind-bow.glitch.me/twitch-api/streams/misterrogers
     - Possible additional features:
       - Button that brings up an input box and lets you add additional
