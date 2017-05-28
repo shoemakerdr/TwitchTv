@@ -50,10 +50,20 @@
 
 		function readyToRender() {
 			console.log(channelStates);
-			if (Object.keys(channelStates[channels[0]]).length > 1) {
+			if (channelsReady(channelStates)) {
 				setChannelNodes(channelStates);
 				render(allChannels);
 			}
+		}
+
+		function channelsReady(stateObject) {
+			for (let channel in stateObject) {
+				if (!stateObject[channel].users || !stateObject[channel].streams) {
+					console.log(`channel ${channel} is not ready`);
+					return false;
+				}
+			}
+			return true;
 		}
 
 		// fetch user info for all channels
@@ -108,10 +118,10 @@
             nameBlock.appendChild(name);
 
 
-            if (channel.streams.status) {
+            if (channel.streams.stream !== null) {
 				section.className = 'live';
 				const status = document.createElement('p');
-				status.innerHTML = channel.streams.status;
+				status.innerHTML = channel.streams.stream.channel.status;
 				nameBlock.appendChild(status);
             }
             section.appendChild(img);
