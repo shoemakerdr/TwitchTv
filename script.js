@@ -1,125 +1,122 @@
-// Cloud9 IDE get rid of 'fetch' warning --> 
-/*global fetch*/ 
+// Cloud9 IDE get rid of 'fetch' warning -->
+/*global fetch*/
 
 
 (function () {
-	
+
 	"use strict";
 	// DOMContentLoaded event listener
 	document.addEventListener('DOMContentLoaded', () => {
-		
+
 		const url = 'https://wind-bow.glitch.me/twitch-api/';
-		const usersRoute = 'users/';
-		const streamsRoute = 'streams/';
+		const users = 'users';
+		const streams = 'streams';
 		const channels = ['esl_sc2', 'ogamingsc2', 'cretetion', 'freecodecamp',
 		                  'storbeck', 'habathcx', 'robotcaleb', 'noobs2ninjas',
 						  'misterrogers'];
-		let channelStates = {};
-		
+		let channelStates = {
+			esl_sc2: {},
+			ogamingsc2: {},
+			cretetion: {},
+			freecodecamp: {},
+			storbeck: {},
+			habathcx: {},
+			robotcaleb: {},
+			noobs2ninjas: {},
+			misterrogers: {}
+		};
+
 		const list = document.getElementsByTagName('ul')[0];
-		let allChannels;
+		let allChannels = [];
 		let liveChannels;
 		let offlineChannels;
-		
-		
-		// abstracted function that takes the route of API call and array of 
-		// channel names and returns a collection of promises through 
+
+
+		// abstracted function that takes the route of API call and array of
+		// channel names and returns a collection of promises through
 		// Promise.all()
-		function promiseArray(route, array) {
-			return (
+		function fetchAndSetState(route, array) {
 				Promise.all(array.map(channel =>
-					fetch(`${url}${route}${channel}`)
+					fetch(`${url}${route}/${channel}`)
 					.then(res => res.json())
-					.catch(err => 
+					.then(res => {
+						channelStates[channel][route] = res;
+					})
+					.catch(err =>
 						console.log(`Error in fetching ${channel}: ${err}`))
 				))
-				.then(res => console.log(res))
-			);
+				.then(readyToRender);
+		}
+
+		function readyToRender() {
+			console.log(channelStates);
+			if (Object.keys(channelStates[channels[0]]).length > 1) {
+				setChannelNodes(channelStates);
+				render(allChannels);
+			}
 		}
 
 		// fetch user info for all channels
-		const users = promiseArray(usersRoute, channels);
-		
-		// fetch stream info for all channels
-		const streams = promiseArray(streamsRoute, channels);
-		
-		// Calls render function when both users and streams arrays have 
-		// resolved their promises
-		Promise.all([users, streams])
-			.then(() => {
-				setChannelStates(channels);
-				setChannelNodes(channelStates);
-				render(allChannels);
-			})
-			.catch(err => console.log(`Error in getting channels: ${err}`));
+		fetchAndSetState(users, channels);
 
-		// sets channelStates object with props for each channel
-		function setChannelStates(array) {
-			array.forEach((channel, i) => {
-				
-				channelStates[channel] = {
-					error: users[i].error || null,
-					message: users[i].message || null,
-					name: users[i].display_name || null,
-					logo: users[i].logo || null,
-					stream: streams[i].channel.status || null
-				};
-				
-			});
-		}
-		
+		// fetch stream info for all channels
+		fetchAndSetState(streams, channels);
+
+
 		// rendering functions
-		
+
 		// main render-- clears ul node and appends an array of nodes
 		function render(nodes) {
 			list.innerHTML = '';
 			nodes.forEach(node => {
-				list.appendChild(node);	
+				list.appendChild(node);
 			});
 		}
-		
-		function setChannelNodes(channels) {
-			allChannels = channels.map(channel => {
-				return createChannelNode(channel);
-			});
-			
+
+		function setChannelNodes(collection) {
+			// set allChannels
+			for (let channel in collection) {
+				allChannels.push(createChannelNode(collection[channel]));
+			};
+
 			liveChannels = allChannels.filter(channel => {
 				return channel.className === 'live';
 			});
-			
+
 			offlineChannels = allChannels.filter(channel => {
 				return channel.className === 'offline';
 			});
 		}
-		
+
         // create channel node for each channel
         function createChannelNode(channel) {
+			console.log(channel.users.display_name);
             // define elements that will be made in this render function
             const section = document.createElement('li');
             // pull properties out of obj and use them to render
-            section.id = channel.name.toLowerCase();
-            if (channel.error) {
-				section.innerHTML = channel.message;
+            section.id = channel.users.display_name.toLowerCase();
+            if (channel.users.error) {
+				section.innerHTML = channel.users.message;
 				return section;
             }
             const nameBlock = document.createElement('div');
             const name = document.createElement('h2');
             const img = document.createElement('img');
             section.className = 'offline';
-            img.src = channel.logo;
-            name.innerHTML = channel.name;
+            img.src = channel.users.logo;
+            name.innerHTML = channel.users.display_name;
             nameBlock.appendChild(name);
-            
-            
-            if (channel.stream) {
+
+
+            if (channel.streams.status) {
 				section.className = 'live';
 				const status = document.createElement('p');
-				status.innerHTML = channel.status;
+				status.innerHTML = channel.streams.status;
 				nameBlock.appendChild(status);
             }
             section.appendChild(img);
             section.appendChild(nameBlock);
-            
+
             return section;
         }
 
@@ -131,7 +128,7 @@
 		list.addEventListener('click', event => {
 			window.open(`https://www.twitch.tv/${event.target.id}`, '_blank');
 		});
-		
-		
+
+
 	});
 })();
