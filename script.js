@@ -1,7 +1,6 @@
 // Cloud9 IDE get rid of 'fetch' warning -->
 /*global fetch*/
 
-
 (function () {
 
 	"use strict";
@@ -26,7 +25,11 @@
 			misterrogers: {}
 		};
 
+		const input = document.getElementsByTagName('input')[0];
 		const list = document.getElementsByTagName('ul')[0];
+		const allSort = document.getElementById('allSort');
+		const offlineSort = document.getElementById('offlineSort');
+		const liveSort = document.getElementById('liveSort');
 		let allChannels = [];
 		let liveChannels;
 		let offlineChannels;
@@ -49,13 +52,14 @@
 		}
 
 		function readyToRender() {
-			console.log(channelStates);
 			if (channelsReady(channelStates)) {
+				console.log(channelStates);
 				setChannelNodes(channelStates);
 				render(allChannels);
 			}
 		}
 
+		// return boolean for if channelStates object is ready to be rendered
 		function channelsReady(stateObject) {
 			for (let channel in stateObject) {
 				if (!stateObject[channel].users || !stateObject[channel].streams) {
@@ -104,16 +108,20 @@
             // define elements that will be made in this render function
             const section = document.createElement('li');
             // pull properties out of obj and use them to render
-            section.id = channel.users.display_name.toLowerCase();
             if (channel.users.error) {
+	            section.className = 'offline';
 				section.innerHTML = channel.users.message;
 				return section;
             }
+            section.id = channel.users.display_name.toLowerCase();
             const nameBlock = document.createElement('div');
             const name = document.createElement('h2');
             const img = document.createElement('img');
             section.className = 'offline';
-            img.src = channel.users.logo;
+			if (channel.users.logo === null) {
+				img.src = 'https://static-cdn.jtvnw.net/jtv_user_pictures/twitch-profile_image-8a8c5be2e3b64a9a-300x300.png';
+			}
+            else img.src = channel.users.logo;
             name.innerHTML = channel.users.display_name;
             nameBlock.appendChild(name);
 
@@ -130,13 +138,44 @@
             return section;
         }
 
-
-
-
 		// bind events function(s)
 
 		list.addEventListener('click', event => {
-			window.open(`https://www.twitch.tv/${event.target.id}`, '_blank');
+			if (event.target.id) {
+				window.open(`https://www.twitch.tv/${event.target.id}`, '_blank');
+				event.stopPropagation();
+			}
+			if (event.target.parentNode.id) {
+				window.open(`https://www.twitch.tv/${event.target.parentNode.id}`, '_blank');
+				event.stopPropagation();
+			}
+			if (event.target.parentNode.parentNode.id && event.target.parentNode.parentNode.id !== 'interface') {
+				window.open(`https://www.twitch.tv/${event.target.parentNode.parentNode.id}`, '_blank');
+				event.stopPropagation();
+			}
+		});
+
+		allSort.addEventListener('click', () => {
+			render(allChannels);
+		});
+
+		offlineSort.addEventListener('click', () => {
+			render(offlineChannels);
+		});
+
+		liveSort.addEventListener('click', () => {
+			render(liveChannels);
+		});
+
+		input.addEventListener('input', () => {
+			let inputTerm = input.value;
+			console.log(input.value);
+			let testReg = new RegExp(`^${inputTerm}`);
+			let sortedChannels = allChannels.filter(channel => {
+				return testReg.test(channel.id);
+			});
+			console.log(sortedChannels);
+			render(sortedChannels)
 		});
 
 
