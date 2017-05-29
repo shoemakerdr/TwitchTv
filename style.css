@@ -4,15 +4,20 @@ body {
 	justify-content: center;
 }
 
-h1 {
+img {
+	width: 50%;
+	align-self: center;
+}
+
+/*h1 {
 	font-size: 4em;
 	color: #593C8F;
 	text-align: center;
 	margin-bottom: .25em;
-}
+}*/
 
 #interface {
-	background-color: #f5ebff;
+	background-color: #e4daf7;
 	padding: .5em;
 	width: 65%;
 	display: flex;
@@ -46,7 +51,7 @@ ul {
 }
 
 .live {
-	background-color: #aad9fb;
+	background-color: #96cff9;
 }
 
 span {
@@ -60,7 +65,7 @@ span {
 }
 
 #liveSort {
-	background-color: #aad9fb;
+	background-color: #96cff9;
 }
 
 #offlineSort {
@@ -80,7 +85,7 @@ li {
 	margin: .5em;
 }
 
-img {
+li img {
 	width: 5em;
 	height: 5em;
 	margin: 1em;
