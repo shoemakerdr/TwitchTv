@@ -3,16 +3,13 @@ Free Code Camp's Twitch TV Project
 
 1. Notes for app
     - Interface wrapper
-    - Three tabs: ALL, ONLINE, OFFLINE
+    - Three filter buttons: ALL, ONLINE, OFFLINE
     - Search bar
       - Filters Twitch channels on input change
     - Box for each channel
-      - Icon for channel picture
-      - Box/button with live/offline status
-      - Button to see more information
-      - Info box for more info
-    - Array of channels: ["esl_sc2", "ogamingsc2", "cretetion", "freecodecamp", "storbeck", "habathcx", "robotcaleb", "noobs2ninjas", "misterrogers"]
-    - Example API call URL: https://wind-bow.glitch.me/twitch-api/streams/misterrogers
+      - Img for channel logo
+      - Color for live/offline status
+      - If live, will contain info about current streaming status
     - Possible additional features:
       - Button that brings up an input box and lets you add additional
         channels
