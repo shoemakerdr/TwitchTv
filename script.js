@@ -145,7 +145,7 @@
 				window.open(`https://www.twitch.tv/${event.target.id}`, '_blank');
 				event.stopPropagation();
 			}
-			if (event.target.parentNode.id) {
+			if (event.target.parentNode.id && event.target.parentNode.id !== 'interface') {
 				window.open(`https://www.twitch.tv/${event.target.parentNode.id}`, '_blank');
 				event.stopPropagation();
 			}
