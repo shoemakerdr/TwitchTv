@@ -25,6 +25,7 @@
 			misterrogers: {}
 		};
 
+        const logo = document.getElementsByTagName('img')[0];
 		const input = document.getElementsByTagName('input')[0];
 		const list = document.getElementsByTagName('ul')[0];
 		const allSort = document.getElementById('allSort');
@@ -53,9 +54,10 @@
 
 		function readyToRender() {
 			if (channelsReady(channelStates)) {
-				console.log(channelStates);
-				setChannelNodes(channelStates);
-				render(allChannels);
+                if (allChannels.length === 0) {
+                    setChannelNodes(channelStates);
+                    render(allChannels);
+                }
 			}
 		}
 
@@ -139,6 +141,10 @@
         }
 
 		// bind events function(s)
+
+        logo.addEventListener('click', () => {
+            window.open('https://twitch.tv', '_blank');
+        });
 
 		list.addEventListener('click', event => {
 			if (event.target.id) {
